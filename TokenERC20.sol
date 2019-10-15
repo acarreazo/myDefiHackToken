@@ -67,6 +67,9 @@ interface IERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
+/* 
+ * This is a wrapper in order to connect with compound controller
+ */
 interface CETHInterface {
     function mint() external payable; // For ETH
 }
@@ -432,19 +435,25 @@ contract TokenERC20 is ERC20 {
     }
 
      /**
-     * @dev get Compound Comptroller Address
+     * @dev get Compound Comptroller Address. This is to use with the wrapper
      */
     function getCETHAddress() public pure returns (address cEth) {
          cEth = 0x42a628e0c5F3767930097B34b08dCF77e78e4F2B; //Ropsten
     }
     
      
+    /*
+    * This function should be work in order to supply money to the compound market
+    */
     function supplyBalance(uint tokenAmt) public {
     	CETHInterface cToken = CETHInterface(getCETHAddress());
     	cToken.mint.value(tokenAmt)();
 		emit LogMint(getCETHAddress(),tokenAmt,	msg.sender);
     }
     
+    /*
+    * This mint for this TokenERC20
+    */
     function mint(address account, uint256 amount) public {
         _mint(account, amount);
     }
